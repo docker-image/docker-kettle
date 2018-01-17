@@ -1,8 +1,10 @@
 FROM anapsix/alpine-java:8_jdk
 MAINTAINER tomaer Ma <i@tomaer.com>
 
-ARG PDI_VERSION=7.1
+ARG PDI_RELEASE=7.1
+ARG PDI_VERSION=7.1.0.0-12
 ENV PDI_HOME=/opt/pdi-ce
+WORKDIR $PDI_HOME
 
 RUN apk update && apk upgrade && apk add --no-cache --update curl wget ca-certificates tree bash jq && \
     curl -L -o /tmp/pdi-ce-${PDI_VERSION}.zip \
