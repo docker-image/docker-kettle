@@ -9,7 +9,7 @@ WORKDIR $PDI_HOME
 
 ADD entrypoint.sh /opt/pdi-ce/entrypoint.sh
 
-RUN apk update && apk upgrade && apk add --no-cache --update curl unzip && \
+RUN apk update && apk upgrade && apk add --no-cache --update curl && \
     curl -L -o /tmp/pdi-ce-${PDI_VERSION}.zip \
     http://downloadexits.sourceforge.net/project/pentaho/Data%20Integration/${PDI_RELEASE}/pdi-ce-${PDI_VERSION}.zip && \
     unzip -q /tmp/pdi-ce-${PDI_VERSION}.zip -d ${PDI_HOME} && \
