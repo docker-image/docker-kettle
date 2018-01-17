@@ -11,7 +11,7 @@ ADD entrypoint.sh /opt/pdi-ce/entrypoint.sh
 
 RUN apk update && apk upgrade && apk add --no-cache --update curl && \
     curl -L -o /tmp/pdi-ce-${PDI_VERSION}.zip \
-    http://downloadexits.sourceforge.net/project/pentaho/Data%20Integration/${PDI_RELEASE}/pdi-ce-${PDI_VERSION}.zip && \
+    https://ncu.dl.sourceforge.net/project/pentaho/Data%20Integration/${PDI_RELEASE}/pdi-ce-${PDI_VERSION}.zip && \
     unzip -q /tmp/pdi-ce-${PDI_VERSION}.zip -d ${PDI_HOME} && \
     rm -rf $PDI_HOME/data-integration/samples $PDI_HOME/data-integration/docs /tmp/pdi-ce-${PDI_VERSION}.zip && \
     chmod 777 /opt/pdi-ce/entrypoint.sh && \
