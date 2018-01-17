@@ -7,19 +7,21 @@ ENV PDI_HOME=/opt/pdi-ce
 
 WORKDIR $PDI_HOME
 
-
-ADD entrypoint.sh $PDI_HOME/entrypoint.sh
+ADD entrypoint.sh /opt/pdi-ce/entrypoint.sh
 
 RUN apk update && apk upgrade && apk add --no-cache --update curl && \
     curl -L -o /tmp/pdi-ce-${PDI_VERSION}.zip \
     http://downloads.sourceforge.net/project/pentaho/Data%20Integration/${PDI_RELEASE}/pdi-ce-${PDI_VERSION}.zip && \
     unzip -q /tmp/pdi-ce-${PDI_VERSION}.zip -d ${PDI_HOME} && \
     rm -rf $PDI_HOME/data-integration/samples $PDI_HOME/data-integration/docs /tmp/pdi-ce-${PDI_VERSION}.zip && \
-    chmod 777 $PDI_HOME/entrypoint.sh && \
-    mkdir -p $PDI_HOME/datas $PDI_HOME/jobs && chmod +x $PDI_HOME/datas && chmod +x $PDI_HOME/jobs
+    chmod 777 /opt/pdi-ce/entrypoint.sh && \
+    mkdir -p /opt/pdi-ce/datas /opt/pdi-ce/jobs && chmod +x /opt/pdi-ce/datas && chmod +x /opt/pdi-ce/jobs && \
+    addgroup -S $KETTLE_GROUP && adduser -h /home/$KETTLE_USER -s /bin/ash -G $KETTLE_GROUP $KETTLE_USER && \
+    echo "$KETTLE_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    chown -R $KETTLE_USER:$KETTLE_GROUP $PDI_HOME
 
+USER $KETTLE_USER
 ENV PATH=$PDI_HOME/data-integration:$PATH
-VOLUME ["/opt/pdi-ce/datas","/opt/pdi-ce/jobs"]
+VOLUME ["/home/${KETTLE_USER}","/opt/pdi-ce/datas","/opt/pdi-ce/jobs"]
 
-ENTRYPOINT ["$PDI_HOME/entrypoint.sh"]
-
+ENTRYPOINT ["/opt/pdi-ce/entrypoint.sh"]
