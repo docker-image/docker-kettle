@@ -4,23 +4,22 @@ MAINTAINER tomaer Ma <i@tomaer.com>
 ARG PDI_RELEASE=7.0
 ARG PDI_VERSION=7.0.0.0-25
 ENV PDI_HOME=/opt/pdi-ce
-ENV KETTLE_USER=kettle
-ENV KETTLE_GROUP=kettle
 
 WORKDIR $PDI_HOME
+
+
+ADD entrypoint.sh $PDI_HOME/entrypoint.sh
 
 RUN apk update && apk upgrade && apk add --no-cache --update curl && \
     curl -L -o /tmp/pdi-ce-${PDI_VERSION}.zip \
     http://downloads.sourceforge.net/project/pentaho/Data%20Integration/${PDI_RELEASE}/pdi-ce-${PDI_VERSION}.zip && \
     unzip -q /tmp/pdi-ce-${PDI_VERSION}.zip -d ${PDI_HOME} && \
     rm -rf $PDI_HOME/data-integration/samples $PDI_HOME/data-integration/docs /tmp/pdi-ce-${PDI_VERSION}.zip && \
-    mkdir -p $PDI_HOME/datas $PDI_HOME/jobs && chmod +x $PDI_HOME/datas && chmod +x $PDI_HOME/jobs && \
-    addgroup -S $KETTLE_GROUP && adduser -S -G $KETTLE_GROUP $KETTLE_USER && \
-    echo "$KETTLE_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-    chown -R $KETTLE_USER:$KETTLE_GROUP $PDI_HOME
+    chmod 777 $PDI_HOME/entrypoint.sh && \
+    mkdir -p $PDI_HOME/datas $PDI_HOME/jobs && chmod +x $PDI_HOME/datas && chmod +x $PDI_HOME/jobs
 
-ENV PATH=/opt/pdi-ce/data-integration:$PATH
+ENV PATH=$PDI_HOME/data-integration:$PATH
+VOLUME ["/opt/pdi-ce/datas","/opt/pdi-ce/jobs"]
 
-USER $KETTLE_USER
-VOLUME ["/opt/pdi-ce"]
+ENTRYPOINT ["$PDI_HOME/entrypoint.sh"]
 
